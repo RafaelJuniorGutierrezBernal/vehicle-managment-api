@@ -3,58 +3,57 @@ import { useParams, useNavigate } from "react-router-dom";
 import { vehicleService } from "../../services/VehicleService";
 import type { Vehicle } from "../../models/Vehicle";
 import VehicleForm from "./VehicleForm";
+import { useToast } from "../common/Toast";
 
 const EditVehicle = () => {
   const { vin } = useParams<{ vin: string }>();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchVehicle = async () => {
-      if (!vin) return;
-      try {
-        const data = await vehicleService.getVehicleByVin(vin);
-        setVehicle(data);
-      } catch (error) {
-        console.error("Error fetching vehicle for edit:", error);
-        alert("No se pudo cargar la información del vehículo.");
+    if (!vin) return;
+    vehicleService
+      .getVehicleByVin(vin)
+      .then(setVehicle)
+      .catch(() => {
+        showToast("No se pudo cargar la información del vehículo.", "error");
         navigate("/");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchVehicle();
-  }, [vin, navigate]);
+      })
+      .finally(() => setLoading(false));
+  }, [vin, navigate, showToast]);
 
   const handleUpdate = async (formattedData: Vehicle) => {
     if (!vin) return;
     try {
       await vehicleService.updateVehicle(vin, formattedData);
-      alert("Vehículo actualizado exitosamente");
+      showToast("Vehículo actualizado exitosamente.", "success");
       navigate(`/vehicle/${vin}`);
     } catch (error: any) {
-      console.error("Error al actualizar vehículo:", error);
-      alert(error.message || "Error al actualizar vehículo");
+      showToast(error.message || "Error al actualizar vehículo.", "error");
     }
   };
 
-  if (loading) return <div className="text-center py-10">Cargando datos del vehículo...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-10 w-10 border-2 border-[var(--accent-primary)] border-t-transparent" />
+      </div>
+    );
+  }
+
   if (!vehicle) return null;
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h2 className="text-3xl font-extrabold text-gray-900">Editar Vehículo</h2>
-        <p className="mt-2 text-gray-600">Modifica los datos del vehículo: {vehicle.make} {vehicle.model} ({vin})</p>
+    <div className="max-w-4xl mx-auto space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-[var(--text-primary)]">Editar Vehículo</h2>
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          {vehicle.make} {vehicle.model} — VIN: <span className="font-mono text-[var(--accent-primary)]">{vin}</span>
+        </p>
       </div>
-
-      <VehicleForm
-        initialData={vehicle}
-        onSubmit={handleUpdate}
-        buttonText="Guardar Cambios"
-        isEdit={true}
-      />
+      <VehicleForm initialData={vehicle} onSubmit={handleUpdate} buttonText="Guardar Cambios" isEdit={true} />
     </div>
   );
 };

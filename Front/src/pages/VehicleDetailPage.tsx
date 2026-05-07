@@ -5,62 +5,55 @@ import type { Vehicle } from '../models';
 import { vehicleService } from '../services/VehicleService';
 
 const VehicleDetailPage = () => {
-    const { vin } = useParams();
-    const navigate = useNavigate();
-    const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const { vin } = useParams();
+  const navigate = useNavigate();
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchVehicle = async () => {
-            if (!vin) return;
-            try {
-                setLoading(true);
-                const data = await vehicleService.getVehicleByVin(vin);
-                setVehicle(data);
-                setError(null);
-            } catch (err) {
-                console.error('Error fetching vehicle:', err);
-                setError('No se pudo encontrar el vehículo.');
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    if (!vin) return;
+    vehicleService
+      .getVehicleByVin(vin)
+      .then(setVehicle)
+      .catch(() => setError('No se pudo encontrar el vehículo.'))
+      .finally(() => setLoading(false));
+  }, [vin]);
 
-        fetchVehicle();
-    }, [vin]);
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-        );
-    }
-
-    if (error || !vehicle) {
-        return (
-            <div className="text-center py-20">
-                <h2 className="text-2xl font-bold text-gray-800">{error ?? 'Vehículo no encontrado'}</h2>
-                <button onClick={() => navigate('/')} className="mt-4 text-blue-600 hover:underline">
-                    Volver al inicio
-                </button>
-            </div>
-        );
-    }
-
+  if (loading) {
     return (
-        <div className="max-w-6xl mx-auto">
-            <button 
-                onClick={() => navigate('/')}
-                className="mb-8 text-gray-600 hover:text-blue-600 font-medium flex items-center transition-colors"
-            >
-                <span className="mr-2">←</span> Volver al Catálogo
-            </button>
-            
-            <VehicleDetail vehicle={vehicle} />
-        </div>
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-10 w-10 border-2 border-[var(--accent-primary)] border-t-transparent" />
+      </div>
     );
+  }
+
+  if (error || !vehicle) {
+    return (
+      <div className="text-center py-20 space-y-4">
+        <p className="text-5xl">🚗</p>
+        <h2 className="text-xl font-bold text-[var(--text-primary)]">{error ?? 'Vehículo no encontrado'}</h2>
+        <button
+          onClick={() => navigate('/')}
+          className="text-sm text-[var(--accent-primary)] hover:underline"
+        >
+          ← Volver al Inventario
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto space-y-6">
+      <button
+        onClick={() => navigate('/')}
+        className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
+      >
+        ← Volver al Inventario
+      </button>
+      <VehicleDetail vehicle={vehicle} />
+    </div>
+  );
 };
 
 export default VehicleDetailPage;

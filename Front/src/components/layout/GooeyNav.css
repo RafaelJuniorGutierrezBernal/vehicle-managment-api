@@ -1,0 +1,123 @@
+/* ── GooeyNav palette: maps to our CSS vars ── */
+.gooey-nav-container {
+  --color-1: var(--accent-primary);    /* celeste */
+  --color-2: var(--accent-success);    /* verde   */
+  --color-3: #818cf8;                  /* indigo  */
+  --color-4: var(--accent-warning);    /* amber   */
+
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gooey-nav-container nav ul {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gooey-nav-container nav ul li {
+  position: relative;
+  z-index: 1;
+}
+
+.gooey-nav-container nav ul li a {
+  display: block;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gooey-nav-container nav ul li.active a,
+.gooey-nav-container nav ul li:hover a {
+  color: var(--primary-bg);
+}
+
+/* ── Effect spans ── */
+.gooey-nav-container .effect {
+  position: absolute;
+  border-radius: 10px;
+  pointer-events: none;
+  transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.gooey-nav-container .effect.filter {
+  background: var(--accent-primary);
+  filter: url(#gooey-filter);
+  z-index: 0;
+  overflow: visible;
+}
+
+.gooey-nav-container .effect.text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--primary-bg);
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.gooey-nav-container .effect.text.active {
+  opacity: 1;
+}
+
+/* ── Particles ── */
+.gooey-nav-container .particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.gooey-nav-container .effect.filter.active .particle {
+  animation: particleMove var(--time, 1200ms) ease-in-out forwards;
+}
+
+.gooey-nav-container .particle .point {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--color, var(--accent-primary));
+  transform: scale(var(--scale, 1)) rotate(var(--rotate, 0deg));
+}
+
+@keyframes particleMove {
+  0% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--start-x)), calc(-50% + var(--start-y)));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--end-x)), calc(-50% + var(--end-y)));
+  }
+}
+
+/* ── SVG filter def (injected in Header) ── */
+.gooey-filter-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}

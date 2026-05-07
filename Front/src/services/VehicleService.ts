@@ -1,12 +1,5 @@
 import type { Vehicle } from '../models';
-import keycloak from '../keycloak';
-
-const API_BASE_URL = 'http://localhost:8081/api'; 
-
-const getHeaders = () => ({
-    'Content-Type': 'application/json',
-    'Authorization': keycloak.token ? `Bearer ${keycloak.token}` : '',
-});
+import { API_BASE_URL, getHeaders } from '../config/api';
 
 
 export const vehicleService = {

@@ -1,6 +1,6 @@
-# Vehicle Auction API
+# Vehicle Management API
 
-API REST para gestión de subastas de vehículos, Permite administrar el catálogo de vehículos y las ventas asociadas mediante autenticación OAuth2 con Keycloak.
+API REST para gestión de vehículos, Permite administrar el catálogo de vehículos y las ventas asociadas mediante autenticación OAuth2 con Keycloak.
 
 ## Tecnologías
 
@@ -12,6 +12,7 @@ API REST para gestión de subastas de vehículos, Permite administrar el catálo
 - MapStruct
 - SpringDoc OpenAPI (Swagger)
 - Lombok
+- Postman
 
 ## Requisitos previos
 
@@ -43,18 +44,18 @@ java -jar target/vehicle-auction-api-0.0.1-SNAPSHOT.jar
 
 ## Endpoints principales
 
-| Método | Ruta | Descripción | Roles |
-|--------|------|-------------|-------|
-| POST | /api/vehicles | Crear vehículo | USER, ADMIN |
-| GET | /api/vehicles/{vin} | Obtener vehículo por VIN | USER, ADMIN |
-| GET | /api/vehicles/list | Listar vehículos | USER, ADMIN |
-| PUT | /api/vehicles/{vin} | Actualizar vehículo | USER, ADMIN |
-| DELETE | /api/vehicles/{vin} | Eliminar vehículo | USER, ADMIN |
-| POST | /api/sales | Crear venta | ADMIN |
-| GET | /api/sales/{id} | Obtener venta por ID | ADMIN |
-| GET | /api/sales | Listar ventas | ADMIN |
-| PUT | /api/sales/{id} | Actualizar venta | ADMIN |
-| DELETE | /api/sales/{id} | Eliminar venta | ADMIN |
+| Método | Ruta                | Descripción              | Roles       |
+| ------ | ------------------- | ------------------------ | ----------- |
+| POST   | /api/vehicles       | Crear vehículo           | USER, ADMIN |
+| GET    | /api/vehicles/{vin} | Obtener vehículo por VIN | USER, ADMIN |
+| GET    | /api/vehicles/list  | Listar vehículos         | USER, ADMIN |
+| PUT    | /api/vehicles/{vin} | Actualizar vehículo      | USER, ADMIN |
+| DELETE | /api/vehicles/{vin} | Eliminar vehículo        | USER, ADMIN |
+| POST   | /api/sales          | Crear venta              | ADMIN       |
+| GET    | /api/sales/{id}     | Obtener venta por ID     | ADMIN       |
+| GET    | /api/sales          | Listar ventas            | ADMIN       |
+| PUT    | /api/sales/{id}     | Actualizar venta         | ADMIN       |
+| DELETE | /api/sales/{id}     | Eliminar venta           | ADMIN       |
 
 Todas las operaciones requieren Bearer token JWT excepto las rutas públicas indicadas abajo.
 
@@ -68,9 +69,7 @@ Todas las operaciones requieren Bearer token JWT excepto las rutas públicas ind
 
 Una vez iniciada la aplicación, la documentación interactiva está disponible en:
 
-```
 http://localhost:8081/swagger-ui.html
-```
 
 ## CORS
 

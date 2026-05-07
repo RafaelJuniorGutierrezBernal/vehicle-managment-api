@@ -1,92 +1,112 @@
+import { Car } from 'lucide-react';
 import Card from "../common/Card";
 import Button from "../common/Button";
 import type { Vehicle } from "../../models";
 
 interface VehicleCardProps {
-    vehicle: Vehicle;
-    onViewDetails?: () => void;
+  vehicle: Vehicle;
+  onViewDetails?: () => void;
 }
+
+const formatPrice = (price?: number): string => {
+  if (price === undefined) return 'N/A';
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+  }).format(price);
+};
+
+const STATUS_META: Record<string, { label: string; textColor: string; bg: string; pulse: boolean }> = {
+  active: {
+    label: 'Disponible',
+    textColor: 'text-[var(--accent-success)]',
+    bg: 'bg-[var(--accent-success)]/10 border border-[var(--accent-success)]/20',
+    pulse: true,
+  },
+  closed: {
+    label: 'Vendido',
+    textColor: 'text-[var(--accent-danger)]',
+    bg: 'bg-[var(--accent-danger)]/10 border border-[var(--accent-danger)]/20',
+    pulse: false,
+  },
+  pending: {
+    label: 'Pendiente',
+    textColor: 'text-[var(--accent-warning)]',
+    bg: 'bg-[var(--accent-warning)]/10 border border-[var(--accent-warning)]/20',
+    pulse: false,
+  },
+};
 
 function VehicleCard({ vehicle, onViewDetails }: VehicleCardProps) {
+  const status = vehicle.status ?? 'active';
+  const meta = STATUS_META[status] ?? STATUS_META.active;
 
-    const formatPrice = (price?: number): string => {
-        if (price === undefined) return 'N/A';
-        return new Intl.NumberFormat('es-CO', {
-            style: 'currency',
-            currency: 'COP',
-            minimumFractionDigits: 0
-        }).format(price)
-    }
+  return (
+    <Card onClick={onViewDetails}>
+      {/* Image */}
+      <div className="relative overflow-hidden">
+        <img
+          src={vehicle.imageUrl || 'https://placehold.co/400x220/1e293b/38bdf8?text=Sin+Imagen'}
+          alt={`${vehicle.make} ${vehicle.model}`}
+          className="w-full h-44 object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+        />
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
-    const getStatusColor = (status: string = 'active'): string => {
-        switch (status) {
-            case 'active': return 'bg-green-500'
-            case 'closed': return 'bg-red-500'
-            case 'pending': return 'bg-yellow-500'
-            default: return 'bg-gray-500'
-        }
-    }
+        {/* Car icon badge top-left */}
+        <div className="absolute top-2.5 left-2.5 w-7 h-7 rounded-lg bg-[var(--primary-bg)]/60 backdrop-blur-sm flex items-center justify-center">
+          <Car size={14} className="text-[var(--accent-primary)]" strokeWidth={2} />
+        </div>
 
-    const getStatusText = (status: string = 'active'): string => {
-        switch (status) {
-            case 'active': return 'Disponible'
-            case 'closed': return 'Vendido'
-            case 'pending': return 'Pendiente'
-            default: return status
-        }
-    }
+        {/* Status badge top-right */}
+        <span className={`absolute top-2.5 right-2.5 flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${meta.bg} ${meta.textColor} backdrop-blur-sm`}>
+          <span className={`w-1.5 h-1.5 rounded-full bg-current ${meta.pulse ? 'animate-pulse' : ''}`} />
+          {meta.label}
+        </span>
+      </div>
 
-    return (
-        <Card className="max-w-sm" onClick={onViewDetails}>
-            {/* Imagen del vehiculo*/}
-            <div className="relative">
-                <img
-                    src={vehicle.imageUrl || 'https://via.placeholder.com/400x300?text=Sin+Imagen'}
-                    alt={`${vehicle.make} ${vehicle.model}`}
-                    className="w-full h-48 object-cover"
-                />
-                {/*Badge de estado */}
-                <div className={`absolute top-2 right-2 ${getStatusColor(vehicle.status)} text-white px-3 py-1 rounded-full text-sm font-semibold`}>
-                    {getStatusText(vehicle.status)}
-                </div>
-            </div>
-            {/* Contenido del card */}
-            <div className="p-4">
-                {/* Título: Marca y Modelo */}
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
-                    {vehicle.make} {vehicle.model}
-                </h3>
-                {/*Informacion Basica */}
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <span>{vehicle.year}</span>
-                    <span>{(vehicle.odometer || 0).toLocaleString()} km</span>
-                    <span>{vehicle.transmission}</span>
-                </div>
+      {/* Body */}
+      <div className="p-4 space-y-3">
+        <div>
+          <h3 className="text-base font-bold text-[var(--text-primary)] leading-tight tracking-tight">
+            {vehicle.make} {vehicle.model}
+          </h3>
+          <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+            {vehicle.year}
+            {vehicle.transmission && ` • ${vehicle.transmission}`}
+            {vehicle.odometer != null && ` • ${vehicle.odometer.toLocaleString()} km`}
+          </p>
+        </div>
 
-                {/*Descripcion */}
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {vehicle.description || 'Sin descripción disponible'}
-                </p>
-                <div className="border-t border-gray-200 my-3"></div>
-                {/* Precios */}
-                <div className="mb-3">
-                    <div className="flex justify-between items-center">
-                        <span className="text-sm font-semibold text-gray-800">Precio Actual:</span>
-                        <span className="text-xl font-bold text-blue-600">{formatPrice(vehicle.currentPrice)}</span>
-                    </div>
-                </div>
-                {/* Boton de accion */}
-                <Button
-                    variant="primary"
-                    onClick={(e) => {
-                        e?.stopPropagation()
-                        onViewDetails?.()
-                    }}
-                >
-                    Ver Detalles
-                </Button>
-            </div>
-        </Card>
-    )
+        {vehicle.description && (
+          <p className="text-xs text-[var(--text-secondary)] line-clamp-2 leading-relaxed">
+            {vehicle.description}
+          </p>
+        )}
+
+        <div className="pt-3 border-t border-[var(--border-color)] flex items-center justify-between gap-2">
+          <div>
+            <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest font-semibold">Precio</p>
+            <p className="text-lg font-black text-[var(--accent-primary)] tracking-tight">
+              {formatPrice(vehicle.currentPrice)}
+            </p>
+          </div>
+          <Button
+            variant="primary"
+            className="text-xs px-3 py-1.5 shrink-0"
+            onClick={(e) => {
+              e?.stopPropagation();
+              onViewDetails?.();
+            }}
+          >
+            Ver →
+          </Button>
+        </div>
+      </div>
+    </Card>
+  );
 }
-export default VehicleCard
+
+export default VehicleCard;

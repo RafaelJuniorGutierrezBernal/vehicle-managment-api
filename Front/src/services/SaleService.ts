@@ -1,12 +1,6 @@
 import type { Sale } from "../models/Sale";
-import keycloak from "../keycloak";
+import { API_BASE_URL, getHeaders } from '../config/api';
 
-const API_BASE_URL = 'http://localhost:8081/api';
-
-const getHeaders = () => ({
-    'Content-Type': 'application/json',
-    'Authorization': keycloak.token ? `Bearer ${keycloak.token}` : '',
-});
 export const saleService = {
     
     createSale: async (saleData: Sale): Promise<Sale> =>{
