@@ -12,17 +12,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
 @DataJpaTest
 class SaleRepositoryTest {
 
-  @Autowired SaleRepository saleRepository;
-  @Autowired VehicleRepository vehicleRepository;
+  @Autowired
+  SaleRepository saleRepository;
+  @Autowired
+  VehicleRepository vehicleRepository;
 
   @Test
   void saveAndFindById() {
     VehicleEntity vehicle = new VehicleEntity();
     vehicle.setVin("1HGCM82633A004352");
-    vehicle.setYear(2018); 
+    vehicle.setYear(2018);
     vehicleRepository.save(vehicle);
 
     SaleEntity sale = new SaleEntity();
@@ -30,12 +33,10 @@ class SaleRepositoryTest {
     sale.setMmr(new BigDecimal("12000.00"));
     sale.setSellingPrice(new BigDecimal("12500.00"));
     sale.setSaleDate(LocalDate.parse("2026-02-09"));
-    sale.setVehicle(vehicle);   // clave: setear la relación, no el VIN como id
+    sale.setVehicle(vehicle);
 
     SaleEntity saved = saleRepository.save(sale);
 
     assertThat(saleRepository.findById(saved.getId())).isPresent();
   }
 }
-
-

@@ -1,0 +1,86 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`VehicleCard > matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="
+        bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl overflow-hidden
+        transition-all duration-300 ease-out shadow-lg
+        
+        
+      "
+  >
+    <div
+      class="relative overflow-hidden"
+    >
+      <img
+        alt="Toyota Corolla"
+        class="w-full h-44 object-cover transition-transform duration-500 group-hover:scale-105"
+        loading="lazy"
+        src="https://test.com/image.jpg"
+      />
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"
+      />
+      <div
+        class="absolute top-2.5 left-2.5 w-7 h-7 rounded-lg bg-[var(--primary-bg)]/60 backdrop-blur-sm flex items-center justify-center"
+      >
+        <div
+          data-testid="car-icon"
+        />
+      </div>
+      <span
+        class="absolute top-2.5 right-2.5 flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--accent-success)]/10 border border-[var(--accent-success)]/20 text-[var(--accent-success)] backdrop-blur-sm"
+      >
+        <span
+          class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"
+        />
+        Disponible
+      </span>
+    </div>
+    <div
+      class="p-4 space-y-3"
+    >
+      <div>
+        <h3
+          class="text-base font-bold text-[var(--text-primary)] leading-tight tracking-tight"
+        >
+          Toyota Corolla
+        </h3>
+        <p
+          class="text-xs text-[var(--text-secondary)] mt-0.5"
+        >
+          2024 • Automática • 15,000 km
+        </p>
+      </div>
+      <p
+        class="text-xs text-[var(--text-secondary)] line-clamp-2 leading-relaxed"
+      >
+        Test description
+      </p>
+      <div
+        class="pt-3 border-t border-[var(--border-color)] flex items-center justify-between gap-2"
+      >
+        <div>
+          <p
+            class="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest font-semibold"
+          >
+            Precio
+          </p>
+          <p
+            class="text-lg font-black text-[var(--accent-primary)] tracking-tight"
+          >
+            $ 35.000.000
+          </p>
+        </div>
+        <button
+          class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--primary-bg)] disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95 bg-gradient-to-r from-[var(--accent-primary)] to-[#0ea5e9] text-[var(--primary-bg)] hover:opacity-90 hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] focus:ring-[var(--accent-primary)] text-xs px-3 py-1.5 shrink-0"
+          type="button"
+        >
+          Ver →
+        </button>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -18,50 +18,54 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class SaleServiceImpl implements SaleService{
+public class SaleServiceImpl implements SaleService {
     private final SaleRepository saleRepository;
     private final VehicleRepository vehicleRepository;
     private final SaleMapper saleMapper;
 
     @Override
     public SaleRespDTO create(SaleReqDTO reqDTO) {
-      String vin = reqDTO.getVehicleVin().trim();
-      VehicleEntity vehicle = vehicleRepository.findById(vin)
-            .orElseThrow(() -> new EntityNotFoundException("There is no vehicle with vin: " + vin));
-    SaleEntity sale = saleMapper.toEntity(reqDTO);
-    sale.setVehicle(vehicle);
-    sale = saleRepository.save(sale);
-    return saleMapper.toResponseDTO(sale);
-            
-}
-    
+        String vin = reqDTO.getVehicleVin().trim();
+        VehicleEntity vehicle = vehicleRepository.findById(vin)
+                .orElseThrow(() -> new EntityNotFoundException("There is no vehicle with vin: " + vin));
+
+        vehicle.setState("Vendido");
+        vehicleRepository.save(vehicle);
+
+        SaleEntity sale = saleMapper.toEntity(reqDTO);
+        sale.setVehicle(vehicle);
+        sale = saleRepository.save(sale);
+        return saleMapper.toResponseDTO(sale);
+
+    }
+
     @Override
     public SaleRespDTO getById(Long id) {
-        SaleEntity sale  = saleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Sale with ID: " +id)); 
-            return saleMapper.toResponseDTO(sale);
-        }
+        SaleEntity sale = saleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Sale with ID: " + id));
+        return saleMapper.toResponseDTO(sale);
+    }
 
     @Override
     public List<SaleRespDTO> list() {
         return saleRepository.findAll().stream()
-            .map(saleMapper::toResponseDTO)
-            .toList();
+                .map(saleMapper::toResponseDTO)
+                .toList();
     }
 
     @Override
     public void deleteById(Long id) {
         saleRepository.deleteById(id);
     }
+
     @Override
-    public SaleRespDTO updateSale(Long id, SaleReqDTO saleReqDTO){
+    public SaleRespDTO updateSale(Long id, SaleReqDTO saleReqDTO) {
         SaleEntity existingSale = saleRepository.findById(id)
-        .orElseThrow(()->new EntityNotFoundException("Sale with ID: "+ id +" not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Sale with ID: " + id + " not found"));
 
         if (!existingSale.getVehicle().getVin().equals(saleReqDTO.getVehicleVin())) {
-            VehicleEntity newVehicle = 
-            vehicleRepository.findById(saleReqDTO.getVehicleVin())
-            .orElseThrow(()-> new EntityNotFoundException("Vehicle Not found"));
+            VehicleEntity newVehicle = vehicleRepository.findById(saleReqDTO.getVehicleVin())
+                    .orElseThrow(() -> new EntityNotFoundException("Vehicle Not found"));
             existingSale.setVehicle(newVehicle);
         }
 

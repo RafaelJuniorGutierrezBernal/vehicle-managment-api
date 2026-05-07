@@ -3,7 +3,7 @@ export interface Vehicle {
   make: string;                  
   model: string;
   year: number;
-  trim?: string;
+  version?: string;
   body?: string;
   transmission?: string;
   state?: string;
@@ -13,8 +13,6 @@ export interface Vehicle {
   interior?: string;
   description?: string;
   imageUrl?: string;
-  startingPrice?: number;
   currentPrice?: number;
-  auctionEndDate?: Date;
   status?: "active" | "closed" | "pending";
 }

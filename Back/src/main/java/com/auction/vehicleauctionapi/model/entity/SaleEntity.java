@@ -28,20 +28,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(name = "Sales")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class SaleEntity{
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+public class SaleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relacion: muchas ventas pueden apuntar a un mismo vehculo (por VIN)
+    // Relacion
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "vehicle_vin", referencedColumnName = "vin", nullable = false)
     private VehicleEntity vehicle;
     @Column(nullable = false)
     private String seller;
-
 
     @Column(precision = 12, scale = 2)
     private BigDecimal mmr;
@@ -49,17 +48,15 @@ public class SaleEntity{
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal sellingPrice;
 
-    
     @Column(nullable = false)
     private LocalDate saleDate;
 
     @PrePersist
-    private void PrePersist(){
+    private void PrePersist() {
         if (saleDate == null) {
-                saleDate = LocalDate.now();
-                
+            saleDate = LocalDate.now();
+
         }
     }
 
 }
-    
