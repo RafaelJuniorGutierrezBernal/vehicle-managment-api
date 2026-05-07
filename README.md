@@ -70,6 +70,7 @@ Todas las operaciones requieren Bearer token JWT excepto las rutas públicas ind
 Una vez iniciada la aplicación, la documentación interactiva está disponible en:
 
 http://localhost:8081/swagger-ui.html
+```
 
 ## CORS
 
