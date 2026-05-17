@@ -314,4 +314,4 @@ This repository showcases practical backend engineering skills in:
 **Rafael Junior Gutiérrez Bernal**
 
 - GitHub: [RafaelJuniorGutierrezBernal](https://github.com/RafaelJuniorGutierrezBernal)
-- LinkedIn: [rafaeljunior](https://linkedin.com/in/rafaeljunior)
+- LinkedIn: [rafaeljunior](https://www.linkedin.com/in/rafael-junior-gutierrez-bernal-03740a2b4/)
