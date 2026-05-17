@@ -1,120 +1,317 @@
-# Vehicle Management API & Web App
+# Vehicle Management API
 
-Sistema Full-Stack para gestión de vehículos y subastas. Permite administrar el catálogo de vehículos y las ventas asociadas mediante una arquitectura cliente-servidor, con autenticación OAuth2 utilizando Keycloak.
+![Java CI](https://github.com/RafaelJuniorGutierrezBernal/vehicle-managment-api/actions/workflows/ci.yml/badge.svg)
 
-El proyecto está dividido en dos partes principales:
+REST API for vehicle and sales management built with Java 17 and Spring Boot. This project was designed to simulate a real-world backend system where authenticated users interact with protected business resources through a secure, layered architecture.
 
-- **Backend (`/Back`)**: API RESTful robusta construida con Spring Boot.
-- **Frontend (`/Front`)**: Interfaz de usuario dinámica construida con React y TypeScript.
+## Overview
 
----
+Vehicle Management API is a backend application focused on managing vehicles and their related sales operations. Beyond simple CRUD endpoints, the system includes authentication with Keycloak, JWT-based authorization, role-based access control, persistence with PostgreSQL, DTO mapping, API documentation, testing, and continuous integration.
 
-## 🖥️ Frontend (React + TypeScript)
+The goal of this project is not only to expose endpoints, but to demonstrate how a complete backend flow works from client request to secured business logic and database persistence.
 
-El lado del cliente es una Single Page Application (SPA) encargada de la interfaz y experiencia de usuario.
+## Business Scenario
 
-### Tecnologías Frontend
+This system represents a vehicle management platform where authorized users can interact with operational data depending on their permissions.
 
-- **React 19** & **TypeScript**: Construcción de componentes tipados y escalables.
-- **Vite**: Entorno de desarrollo rápido y empaquetador.
-- **Tailwind CSS**: Estilos utilitarios para un diseño rápido y responsivo.
-- **React Router DOM**: Gestión de rutas y navegación en la aplicación.
-- **Keycloak JS**: Integración directa con el servidor de autenticación para Single Sign-On (SSO).
-- **Lucide React**: Biblioteca de iconos.
-- **Vitest & React Testing Library**: Entorno para pruebas unitarias.
+### Main actors
 
-### Ejecución del Frontend
+- **USER**: can access general vehicle operations
+- **ADMIN**: can manage vehicles and sales with elevated permissions
+- **System**: validates access, processes business logic, and persists data securely
 
-1. Navegar a la carpeta del frontend:
-   ```bash
-   cd Front
-   ```
-2. Instalar las dependencias:
-   ```bash
-   npm install
-   ```
-3. Iniciar el servidor de desarrollo (por defecto en `http://localhost:5173` o el que Vite asigne):
-   ```bash
-   npm run dev
-   ```
+## Features
 
----
+- Vehicle CRUD operations
+- Sales registration and management
+- Authentication and authorization with OAuth2, JWT, and Keycloak
+- Role-based access control for protected endpoints
+- Layered architecture with Controller, Service, Repository, and Entity separation
+- DTO mapping with MapStruct
+- PostgreSQL persistence with Spring Data JPA
+- Interactive API documentation with Swagger UI / OpenAPI
+- Unit testing with JUnit and Mockito
+- Continuous Integration with GitHub Actions
 
-## ⚙️ Backend (Spring Boot)
+## End-to-End System Flow
 
-API REST encargada de la lógica de negocio, acceso a datos y protección de recursos.
+The project is easier to understand when viewed as a complete request flow instead of isolated backend components.
 
-### Tecnologías Backend
+```text
+[ Client / Frontend / API Consumer ]
+                |
+                | 1. Authenticate user credentials
+                v
+           [ Keycloak ]
+                |
+                | 2. Return JWT access token
+                v
+[ Client sends request with Bearer Token ]
+                |
+                v
+         [ Spring Security Filter ]
+                |
+                | 3. Validate token and roles
+                v
+            [ Controller ]
+                |
+                | 4. Receive and validate request
+                v
+             [ Service ]
+                |
+                | 5. Apply business rules
+                v
+           [ Repository ]
+                |
+                | 6. Persist / query data
+                v
+          [ PostgreSQL DB ]
+                |
+                | 7. Return result
+                v
+             [ Response ]
+```
 
-- **Java 17** & **Spring Boot 3.2**
-- **Spring Security**: Configurado como Resource Server de OAuth2 validando tokens JWT.
-- **Spring Data JPA** & **PostgreSQL**: Persistencia de datos.
-- **MapStruct**: Mapeo eficiente entre Entidades y DTOs.
-- **SpringDoc OpenAPI (Swagger)**: Documentación de la API.
-- **Lombok**: Reducción de código repetitivo (getters, setters, constructores).
+## Authentication Flow
 
-### Requisitos previos
+This project uses Keycloak as the identity and access management provider.
 
-- JDK 17
-- Maven 3.6+
-- **Keycloak** (puerto 8080) con un realm configurado llamado `vehicle-auction` y roles `USER` y `ADMIN`.
+### Authentication sequence
 
-### Configuración del Backend
+1. The user authenticates against Keycloak.
+2. Keycloak returns a JWT access token.
+3. The client sends the token in the `Authorization: Bearer <token>` header.
+4. Spring Security validates the token and extracts roles/authorities.
+5. The application authorizes or rejects the request based on endpoint permissions.
+6. If authorized, the request continues through the application layers.
 
-La aplicación corre por defecto en el puerto `8081`.
+### Auth flow diagram
 
-Variables relevantes en `Back/src/main/resources/application.properties`:
+```text
+User -> Keycloak -> JWT Token
+User -> API with Bearer Token
+API -> Validate Token -> Check Roles -> Allow / Deny
+```
 
-- `server.port`: Puerto de la API (8081)
-- `spring.security.oauth2.resourceserver.jwt.issuer-uri`: URI del realm de Keycloak (ej. `http://localhost:8080/realms/vehicle-auction`)
+## Role-Based Access
 
-### Ejecución del Backend
+The API applies role-based access control to restrict sensitive operations.
 
-Navegar a la carpeta del backend y ejecutar:
+| Role | Permissions |
+|------|-------------|
+| USER | Access general vehicle-related operations |
+| ADMIN | Full access to vehicle and sales management endpoints |
+
+This separation helps simulate a real production scenario where not every authenticated user should have the same privileges.
+
+## Architecture
+
+The application follows a layered architecture to keep responsibilities clearly separated and improve maintainability.
+
+```text
+Client
+  |
+  v
+Controller -> Service -> Repository -> Database
+                |
+                v
+              DTO / Mapper
+```
+
+### Layer responsibilities
+
+- **Controller:** receives HTTP requests, delegates work, and returns responses
+- **Service:** contains business logic and application rules
+- **Repository:** handles persistence with Spring Data JPA
+- **Entity:** represents persisted domain models
+- **DTO / Mapper:** decouples internal entities from external API contracts
+
+## Project Structure
+
+```text
+src/
+ ├── main/
+ │   ├── java/
+ │   │   └── ...
+ │   └── resources/
+ └── test/
+     └── java/
+```
+
+## Core Use Cases
+
+### 1. User authenticates and retrieves vehicles
+
+1. A user authenticates through Keycloak.
+2. Keycloak returns a valid JWT token.
+3. The client sends a request to retrieve vehicles.
+4. Spring Security validates the token.
+5. The controller receives the request.
+6. The service processes the request logic.
+7. The repository retrieves the data from PostgreSQL.
+8. The API returns the vehicle list.
+
+### 2. Admin creates a new vehicle
+
+1. An admin authenticates and receives a JWT token.
+2. The admin sends a `POST /api/vehicles` request.
+3. Spring Security validates the token and role.
+4. The controller validates the incoming payload.
+5. The service applies business rules.
+6. The repository saves the new vehicle in PostgreSQL.
+7. The API returns the created resource.
+
+### 3. Admin registers a sale
+
+1. An admin logs in through Keycloak.
+2. The admin sends a request to the sales endpoint.
+3. The system validates authorization.
+4. The business layer processes the sale registration.
+5. The repository stores the sale.
+6. The API responds with the sale data or confirmation.
+
+## Tech Stack
+
+- Java 17
+- Spring Boot
+- Spring Security
+- OAuth2 Resource Server
+- JWT
+- Keycloak
+- Spring Data JPA
+- Hibernate
+- PostgreSQL
+- MapStruct
+- Lombok
+- Maven
+- Docker Compose
+- Swagger / OpenAPI
+- JUnit 5
+- Mockito
+- GitHub Actions
+
+## Getting Started
+
+### 1. Clone the repository
 
 ```bash
-cd Back
+git clone https://github.com/RafaelJuniorGutierrezBernal/vehicle-managment-api.git
+cd vehicle-managment-api
+```
+
+### 2. Configure environment variables
+
+Create a `.env` file based on the `.env.example` file.
+
+### 3. Start infrastructure services
+
+```bash
+docker-compose up -d
+```
+
+### 4. Run the application
+
+```bash
 mvn spring-boot:run
 ```
 
-O compilando primero:
+## Environment Variables
 
-```bash
-mvn clean install
-java -jar target/vehicle-auction-api-0.0.1-SNAPSHOT.jar
+Use the following template as a reference for local configuration:
+
+```env
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/vehicle_db
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=your_password
+
+KEYCLOAK_SERVER_URL=http://localhost:8081
+KEYCLOAK_REALM=vehicle-realm
+KEYCLOAK_CLIENT_ID=vehicle-api
+KEYCLOAK_CLIENT_SECRET=your_client_secret
+
+JWT_ISSUER_URI=http://localhost:8081/realms/vehicle-realm
+SERVER_PORT=8080
 ```
 
-### Endpoints principales
+## API Documentation
 
-| Método | Ruta                  | Descripción              | Roles Requeridos |
-| ------ | --------------------- | ------------------------ | ---------------- |
-| POST   | `/api/vehicles`       | Crear vehículo           | USER, ADMIN      |
-| GET    | `/api/vehicles/{vin}` | Obtener vehículo por VIN | USER, ADMIN      |
-| GET    | `/api/vehicles/list`  | Listar vehículos         | USER, ADMIN      |
-| PUT    | `/api/vehicles/{vin}` | Actualizar vehículo      | USER, ADMIN      |
-| DELETE | `/api/vehicles/{vin}` | Eliminar vehículo        | USER, ADMIN      |
-| POST   | `/api/sales`          | Crear venta              | ADMIN            |
-| GET    | `/api/sales/{id}`     | Obtener venta por ID     | ADMIN            |
-| GET    | `/api/sales`          | Listar ventas            | ADMIN            |
-| PUT    | `/api/sales/{id}`     | Actualizar venta         | ADMIN            |
-| DELETE | `/api/sales/{id}`     | Eliminar venta           | ADMIN            |
+Once the application is running, Swagger UI should be available at one of these endpoints:
 
-_(Todas las operaciones requieren un token Bearer JWT excepto las rutas públicas indicadas abajo)._
+```text
+http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui/index.html
+```
 
-### Rutas públicas (Backend)
+## Example Requests
 
-- `GET /actuator/health` - Health check
-- `GET /v3/api-docs/**` - Documentación OpenAPI
-- `GET /swagger-ui/**` - Interfaz Swagger UI interactiva (`http://localhost:8081/swagger-ui.html`)
+### Get all vehicles
 
----
+```bash
+curl -X GET http://localhost:8080/api/vehicles \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
 
-## 🔐 Autenticación y CORS
+### Create a vehicle
 
-### Keycloak (SSO)
+```bash
+curl -X POST http://localhost:8080/api/vehicles \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "brand": "Toyota",
+    "model": "Corolla",
+    "year": 2022
+  }'
+```
 
-Toda la aplicación confía en un servidor **Keycloak** local. El frontend inicia un flujo de login automáticamente (`check-sso`) y adjunta el token JWT a las peticiones hacia la API en el backend, el cual valida las firmas criptográficas y extrae los roles (`USER`, `ADMIN`).
+### Register a sale
 
-### CORS (Cross-Origin Resource Sharing)
+```bash
+curl -X POST http://localhost:8080/api/sales \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "vehicleId": 1,
+    "customerName": "John Doe",
+    "saleAmount": 25000
+  }'
+```
 
-El backend está configurado para aceptar peticiones de los orígenes del frontend (`http://localhost:3000`, `http://localhost:4200` y Vite local). Esto puede ser ajustado en el archivo `SecurityConfig.java` del backend.
+## Running Tests
+
+```bash
+mvn test
+```
+
+## Continuous Integration
+
+This project includes a GitHub Actions workflow that automatically runs the test suite on push and pull request events.
+
+## What This Project Demonstrates
+
+This repository showcases practical backend engineering skills in:
+
+- Secure API design
+- Authentication and authorization flows
+- Role-based access control
+- Layered architecture and maintainable code organization
+- Relational persistence with PostgreSQL
+- DTO mapping and API contract separation
+- Automated testing with JUnit and Mockito
+- CI workflow integration with GitHub Actions
+- Technical documentation focused on both architecture and business flow
+
+## Future Improvements
+
+- Add integration tests for complete request flows
+- Improve Docker setup for a one-command local environment
+- Add pagination and filtering for listing endpoints
+- Expand the domain with customers and inventory modules
+- Include sequence diagrams or Mermaid diagrams in future documentation versions
+
+## Author
+
+**Rafael Junior Gutiérrez Bernal**
+
+- GitHub: [RafaelJuniorGutierrezBernal](https://github.com/RafaelJuniorGutierrezBernal)
+- LinkedIn: [rafaeljunior](https://linkedin.com/in/rafaeljunior)
