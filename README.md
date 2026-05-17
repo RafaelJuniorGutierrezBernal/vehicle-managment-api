@@ -201,36 +201,35 @@ cd vehicle-managment-api
 
 ### 2. Configure environment variables
 
-Create a `.env` file based on the `.env.example` file.
+The project currently uses the `application.properties` file in `Back/src/main/resources/`. You can update the values there to match your local PostgreSQL and Keycloak setup.
 
 ### 3. Start infrastructure services
 
-```bash
-docker-compose up -d
-```
+Ensure your PostgreSQL and Keycloak instances are running.
 
 ### 4. Run the application
 
 ```bash
+cd Back
 mvn spring-boot:run
 ```
 
 ## Environment Variables
 
-Use the following template as a reference for local configuration:
+Use the following reference based on the current `application.properties`:
 
 ```env
-SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/vehicle_db
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/vehicle-managment-db
 SPRING_DATASOURCE_USERNAME=postgres
-SPRING_DATASOURCE_PASSWORD=your_password
+SPRING_DATASOURCE_PASSWORD=salome32
 
-KEYCLOAK_SERVER_URL=http://localhost:8081
-KEYCLOAK_REALM=vehicle-realm
+KEYCLOAK_SERVER_URL=http://localhost:8080
+KEYCLOAK_REALM=vehicle-management
 KEYCLOAK_CLIENT_ID=vehicle-api
 KEYCLOAK_CLIENT_SECRET=your_client_secret
 
-JWT_ISSUER_URI=http://localhost:8081/realms/vehicle-realm
-SERVER_PORT=8080
+JWT_ISSUER_URI=http://localhost:8080/realms/vehicle-management
+SERVER_PORT=8081
 ```
 
 ## API Documentation
@@ -238,8 +237,8 @@ SERVER_PORT=8080
 Once the application is running, Swagger UI should be available at one of these endpoints:
 
 ```text
-http://localhost:8080/swagger-ui.html
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8081/swagger-ui.html
+http://localhost:8081/swagger-ui/index.html
 ```
 
 ## Example Requests
@@ -247,14 +246,14 @@ http://localhost:8080/swagger-ui/index.html
 ### Get all vehicles
 
 ```bash
-curl -X GET http://localhost:8080/api/vehicles \
+curl -X GET http://localhost:8081/api/vehicles \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 ### Create a vehicle
 
 ```bash
-curl -X POST http://localhost:8080/api/vehicles \
+curl -X POST http://localhost:8081/api/vehicles \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
@@ -267,7 +266,7 @@ curl -X POST http://localhost:8080/api/vehicles \
 ### Register a sale
 
 ```bash
-curl -X POST http://localhost:8080/api/sales \
+curl -X POST http://localhost:8081/api/sales \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
@@ -280,6 +279,7 @@ curl -X POST http://localhost:8080/api/sales \
 ## Running Tests
 
 ```bash
+cd Back
 mvn test
 ```
 
